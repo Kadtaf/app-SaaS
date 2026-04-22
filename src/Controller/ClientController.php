@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class ClientController extends AbstractController
 {
     /**
-     * Liste tous les clients du tenant de l'utilisateur connecté.
+     * Liste tous les clients du tenant de l'utilisateur connecté
      *
      * Route :
      * GET /api/clients
@@ -32,11 +32,7 @@ class ClientController extends AbstractController
         }
 
         $tenant = $user->getTenant();
-
-        $clients = $clientRepository->findBy(
-            ['tenant' => $tenant],
-            ['id' => 'DESC']
-        );
+        $clients = $clientRepository->findByTenant($tenant);
 
         $data = [];
 
@@ -48,6 +44,7 @@ class ClientController extends AbstractController
                 'phone' => $client->getPhone(),
                 'address' => $client->getAddress(),
                 'createdAt' => $client->getCreatedAt()?->format('Y-m-d H:i:s'),
+                'updatedAt' => $client->getUpdatedAt()?->format('Y-m-d H:i:s'),
             ];
         }
 
@@ -55,7 +52,7 @@ class ClientController extends AbstractController
     }
 
     /**
-     * Crée un nouveau client pour le tenant de l'utilisateur connecté.
+     * Crée un client pour le tenant de l'utilisateur connecté
      *
      * Route :
      * POST /api/clients
@@ -75,7 +72,6 @@ class ClientController extends AbstractController
         }
 
         $tenant = $user->getTenant();
-
         $data = json_decode($request->getContent(), true);
 
         if (!is_array($data)) {
